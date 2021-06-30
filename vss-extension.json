@@ -22,9 +22,6 @@
     ],
     "files": [
         {
-            "path": "tasks/build"
-        },
-        {
             "path": "tasks/cli"
         },
         {
@@ -59,16 +56,6 @@
         "uri": "https://github.com/cloudpups/buildah-toolkit"
     },
     "contributions": [
-        {
-            "id": "buildah-build-task",
-            "type": "ms.vss-distributed-task.task",
-            "targets": [
-                "ms.vss-distributed-task.tasks"
-            ],
-            "properties": {
-                "name": "tasks/build"
-            }
-        },
         {
             "id": "buildah-cli-task",
             "type": "ms.vss-distributed-task.task",
