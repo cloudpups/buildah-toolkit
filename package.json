@@ -16,14 +16,14 @@
     "initdev": "npm run initdev:npm",
     "initdev:npm": "npm run initdev:npm:base & npm run initdev:npm:tasks",
     "initdev:npm:base": "npm install --no-progress --no-update-notifier",
-    "initdev:npm:tasks": "glob-exec --parallel --foreach \"BuildTasks/*/tsconfig.json\" -- \"cd {{file.dir}} && npm install --no-update-notifier --no-progress\"",
-    "compile:tasks": "glob-exec \"BuildTasks/*/tsconfig.json\" -- \"tsc -b {{files.join(' ')}}\"",        
+    "initdev:npm:tasks": "glob-exec --parallel --foreach \"tasks/*/tsconfig.json\" -- \"cd {{file.dir}} && npm install --no-update-notifier --no-progress\"",
+    "compile:tasks": "glob-exec \"tasks/*/tsconfig.json\" -- \"tsc -b {{files.join(' ')}}\"",        
     "build": "npm run build:tasks",    
     "build:tasks": "npm run compile:tasks",
     "clean": "rimraf ./dist",            
     "postbuild": "npm run package-extension -- --rev-version",
-    "package-extension": "tfx extension create --manifests azure-devops-extension.json",
-    "publish-extension": "tfx extension publish --manifests azure-devops-extension.json",
+    "package-extension": "tfx extension create --manifests vss-extension.json",
+    "publish-extension": "tfx extension publish --manifests vss-extension.json",
     "test": "env TEST_REPORT_FILENAME=test-results.xml jest --verbose"
   },
   "dependencies": {

@@ -1,0 +1,12 @@
+{
+  "name": "buildah-toolkit.buildah-cli",
+  "description": "Run buildah commands",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/cloudpups/buildah-toolkit"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "azure-pipelines-task-lib": "^2.9.5"
+  }
+}

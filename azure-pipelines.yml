@@ -1,12 +1,9 @@
 name: '0.0$(rev:.r)'
 
 parameters:
-- name: extension_id
+- name: extension_name
   type: string
-  default: buildah-toolkit
-- name: publisher_id
-  type: string
-  default: cloudpup
+  default: Buildah Toolkit
 - name: connected_service
   type: string
   default: VS Marketplace CloudPup
@@ -20,14 +17,22 @@ parameters:
   type: string
   default: CloudPup Visual Studio Marketplace - Prod
 
-  
+variables:
+- name: package_name
+  value: packaged_extension.vsix
 
 trigger:
-- main
-- feature/*
+# https://docs.microsoft.com/en-us/azure/devops/pipelines/process/stages?view=azure-devops&tabs=yaml#specify-queuing-policies
+# ^^ ugh
+  batch: false
+  branches:
+    include:
+    - main
+    - feature/*
 
-pr:
-- main
+pr: none
+# - main
+
 
 pool:
   vmImage: 'windows-2019'
@@ -38,7 +43,7 @@ stages:
   displayName: 'Build'
   jobs:
   - job: 
-    displayName: 'Build on Windows'
+    displayName: 'Build'
     steps:
     - task: NodeTool@0
       inputs:
@@ -63,11 +68,7 @@ stages:
       name: 'packageStep'
       inputs:
         rootFolder: '$(Build.SourcesDirectory)'
-        outputPath: '$(Build.ArtifactStagingDirectory)\${{ parameters.extension_id }}.vsix'
-        publisherId: ${{ parameters.publisher_id }}
-        extensionId: '${{ parameters.extension_id }}'
-        extensionTag: '-build'
-        extensionName: 'Azure DevOps Extension Tasks'
+        outputPath: '$(Build.ArtifactStagingDirectory)\${{ variables.package_name }}'                
         extensionVersion: '$(Build.BuildNumber)'
         updateTasksVersion: true
         updateTasksVersionType: patch
@@ -104,10 +105,9 @@ stages:
             inputs:              
               connectedServiceName: ${{ parameters.connected_service }}
               fileType: 'vsix'
-              vsixFile: '$(Pipeline.Workspace)/vsix/${{ parameters.extension_id }}.vsix'
-              publisherId: ${{ parameters.publisher_id }}
-              extensionId: '${{ parameters.extension_id }}'
+              vsixFile: '$(Pipeline.Workspace)/vsix/${{ variables.package_name }}'                     
               extensionTag: '-beta'
+              extensionName: '${{ parameters.extension_name }} - Beta'
               updateTasksVersion: false
               extensionVisibility: 'privatepreview'
               shareWith: ${{ parameters.share_with }}
@@ -124,7 +124,6 @@ stages:
               targetPath: '$(publishDev.Extension.OutputPath)'
               artifact: 'beta'
             condition: succeededOrFailed()
-
 - stage: PublishProd
   displayName: 'Publish Public'
   condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
@@ -151,11 +150,9 @@ stages:
             inputs:              
               connectedServiceName: ${{ parameters.connected_service }}
               fileType: 'vsix'
-              vsixFile: '$(Pipeline.Workspace)/vsix/${{ parameters.extension_id }}.vsix'
-              publisherId: ${{ parameters.publisher_id }}
-              extensionId: '${{ parameters.extension_id }}'
+              vsixFile: '$(Pipeline.Workspace)/vsix/${{ variables.package_name }}'                     
               updateTasksVersion: false
-              extensionVisibility: 'public'
+              extensionVisibility: 'privatepreview'
               noWaitValidation:  true          
           - task: IsAzureDevOpsExtensionValid@3
             inputs:              
