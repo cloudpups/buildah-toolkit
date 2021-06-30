@@ -1,0 +1,45 @@
+{
+    "id": "527cb3d6-51e9-4e41-bc2a-98a5ae48a57e",
+    "name": "BuildahBuild",
+    "friendlyName": "Buildah Build",
+    "description": "Runs buildah bud with given parameters",
+    "author": "cloudpup",
+    "helpMarkDown": "",
+    "category": "Utility",
+    "version": {
+      "Major": 0,
+      "Minor": 0,
+      "Patch": 1
+    },
+    "visibility": [
+      "Build",
+      "Release"
+    ],
+    "demands": [
+      "npm"
+    ],
+    "minimumAgentVersion": "1.83.0",    
+    "inputs": [
+      {
+        "name": "additional_args",
+        "type": "string",
+        "label": "Additional Arguments",
+        "required": false,
+        "defaultValue": "",
+        "helpMarkDown": "Additional arguments to pass after `--tag`"
+      },
+      {
+        "name": "tag",
+        "type": "string",
+        "label": "Image Name",
+        "required": true,        
+        "helpMarkDown": "Specifies the name which will be assigned to the resulting image if the build process completes successfully. If imageName does not include a registry name, the registry name localhost will be prepended to the image name."
+      }
+    ],
+    "execution": {
+      "Node": {
+        "target": "ExtensionVersion/ExtensionVersion.js",
+        "argumentFormat": ""
+      }
+    }
+  }
