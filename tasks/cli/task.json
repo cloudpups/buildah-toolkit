@@ -45,7 +45,7 @@
         "aws": "AWS credentials",
         "basic": "Username and Password"
       },
-      "required": false                  
+      "required": true                  
     },
     {
       "name": "awsCredentials",

@@ -2,9 +2,36 @@ import * as tl from "azure-pipelines-task-lib/task";
 import * as tr from "azure-pipelines-task-lib/toolrunner";
 
 const command = tl.getInput("command", true);
+const args = tl.getInput("arguments", false);
+const loginType = tl.getInput("loginType", true);
 
-async function run() {    
-    console.log(`Thanks for using this task! It is not ready yet though! ${command}`);
+function getBasicCredentials() {
+    const basicCredentialsId = tl.getInput("basicCredentials", true);
+    const username = tl.getEndpointAuthorizationParameter(basicCredentialsId, "username", false)
+    const password = tl.getEndpointAuthorizationParameter(basicCredentialsId, "password", false)
+
+    return {
+        username: username,
+        password: password
+    }
+}
+
+async function run() {
+
+    const argArray = [command];
+
+    if (args.length > 0) {
+        argArray.push(args);
+    }
+
+    if (loginType == "basic") {
+        const basicCredentials = getBasicCredentials();
+
+        argArray.push(`--creds=${basicCredentials.username}:${basicCredentials.password}`);
+    }
+
+    tl.debug(`Running buildah ${argArray}`);
+    return tl.exec("buildah", argArray);
 }
 
 run();
