@@ -55,6 +55,18 @@
         "type": "git",
         "uri": "https://github.com/cloudpups/buildah-toolkit"
     },
+    "badges": [
+        {
+          "uri": "https://dev.azure.com/cloudpup/Public%20Pen/_apis/build/status/Buildah%20Toolkit?branchName=main&stageName=Build",
+          "href": "https://dev.azure.com/cloudpup/Public%20Pen/_build?definitionId=4&_a=summary&branchFilter=2%2C2%2C2%2C2%2C2",
+          "description": "Build"
+        },
+        {
+          "uri": "https://dev.azure.com/cloudpup/Public%20Pen/_apis/build/status/Buildah%20Toolkit?branchName=main&stageName=Publish%20Public",
+          "href": "https://dev.azure.com/cloudpup/Public%20Pen/_build?definitionId=4&_a=summary&branchFilter=2%2C2%2C2%2C2%2C2",
+          "description": "Release"
+        }
+      ],
     "contributions": [
         {
             "id": "buildah-cli-task",
