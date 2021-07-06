@@ -1,5 +1,17 @@
 pool: 'TestPool'
 
 steps:
-- bash: 
-  displayName: 'Bash Script'
+- task: NodeTool@0
+  inputs:
+    versionSpec: '10.x'
+- task: BuildahCli@0
+  inputs:
+    command: 'bud'
+    arguments: '-t trfc/sample:latest'
+- task: BuildahCli@0
+  inputs:
+    command: 'push'
+    arguments: 'trfc/sample:latest'
+    loginType: 'basic'
+    basicCredentials: 'Buildah DockerHub'
+    
