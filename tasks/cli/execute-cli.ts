@@ -20,14 +20,14 @@ async function run() {
 
     const argArray = [command];
 
-    if (args.length > 0) {
-        argArray.push(args);
-    }
-
     if (loginType == "basic") {
         const basicCredentials = getBasicCredentials();
 
         argArray.push(`--creds=${basicCredentials.username}:${basicCredentials.password}`);
+    }
+
+    if (args.length > 0) {
+        argArray.push(args);
     }
 
     tl.debug(`Running buildah ${argArray}`);
