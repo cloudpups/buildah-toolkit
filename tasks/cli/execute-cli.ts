@@ -1,10 +1,6 @@
 import * as tl from "azure-pipelines-task-lib/task";
 import * as tr from "azure-pipelines-task-lib/toolrunner";
 
-const command = tl.getInput("command", true);
-const args = tl.getInput("arguments", false);
-const loginType = tl.getInput("loginType", true);
-
 function getBasicCredentials() {
     const basicCredentialsId = tl.getInput("basicCredentials", true);
     const username = tl.getEndpointAuthorizationParameter(basicCredentialsId, "username", false)
@@ -16,19 +12,82 @@ function getBasicCredentials() {
     }
 }
 
+type MaybeValue = ValueNotFound | ValueFound | NoValue;
+
+class ValueNotFound {
+    Type: "ValueNotFound" = "ValueNotFound";
+    Message: string = "";
+}
+
+class ValueFound {
+    Type: "ValueFound" = "ValueFound";
+    Value: string = "";
+    RawValue: string = "";
+}
+
+class NoValue {
+    Type: "NoValue" = "NoValue";
+}
+
+function tryGetValue(inputName: string, required: boolean): MaybeValue {
+    const value = tl.getInput(inputName, required);
+
+    if (!required && (value == 'bad' || value == undefined)) {
+        return {
+            Type: "NoValue"
+        }
+    }
+
+    if (value == 'bad' || value == undefined) {
+        return {
+            Type: "ValueNotFound",
+            Message: `Bad input was given for ${inputName}`
+        };
+    }
+
+    // Force fetching here in case it is a recognized build variable.
+    // If not, that is just a small performance hit that we can 
+    // swallow.
+    // There has to be a better way to do this.
+    const pipelineVariableValue = tl.getVariable(value)
+
+    if (pipelineVariableValue == undefined) {
+        return {
+            Type: "ValueFound",
+            Value: value,
+            RawValue: value
+        }
+    }
+
+    return {
+        Type: "ValueFound",
+        Value: pipelineVariableValue,
+        RawValue: value
+    };
+}
+
 async function run() {
+    const maybeCommand = tryGetValue("command", true);
+    const maybeArgs = tryGetValue("arguments", false);
+    const maybeLoginType = tryGetValue("loginType", true);
 
-    const argArray = [command];
+    if (maybeCommand.Type != "ValueFound" ||
+        maybeLoginType.Type != "ValueFound") {
+        tl.setResult(tl.TaskResult.Failed, "Missing required parameters.", true);
+        return;
+    }
 
-    if (loginType == "basic") {
+    const argArray = [maybeCommand.Value];
+
+    if (maybeLoginType.Value == "basic") {
         const basicCredentials = getBasicCredentials();
 
         argArray.push(`--creds=${basicCredentials.username}:${basicCredentials.password}`);
     }
 
-    if (args.length > 0) {
-        argArray.push(args);
-    }
+    if(maybeArgs.Type == "ValueFound") {
+        argArray.push(maybeArgs.Value);
+    }        
 
     tl.debug(`Running buildah ${argArray}`);
     return tl.exec("buildah", argArray);
