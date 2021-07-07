@@ -1,17 +1,26 @@
 pool: 'TestPool'
 
+variables:
+- name: tag
+  value: docker.io/trfc/buildah-sample:latest
+
 steps:
 - task: NodeTool@0
   inputs:
     versionSpec: '10.x'
+- script: |
+    ls $(System.DefaultWorkingDirectory)/test
+    pwd
+    echo $(tag) >> testfile
+    buildah bud -f $(System.DefaultWorkingDirectory)/test/Dockerfile -t $(tag)
 - task: BuildahCli@0
   inputs:
     command: 'bud'
-    arguments: '-t trfc/sample:latest'
+    arguments: '-f $(System.DefaultWorkingDirectory)/test/Dockerfile -t $(tag)'
 - task: BuildahCli@0
   inputs:
     command: 'push'
-    arguments: 'trfc/sample:latest'
+    arguments: '$(tag)'
     loginType: 'basic'
     basicCredentials: 'Buildah DockerHub'
     
