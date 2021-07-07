@@ -77,20 +77,20 @@ async function run() {
         return;
     }
 
-    const argArray = [maybeCommand.Value];
+    let argument = maybeCommand.Value;
 
     if (maybeLoginType.Value == "basic") {
         const basicCredentials = getBasicCredentials();
 
-        argArray.push(`--creds=${basicCredentials.username}:${basicCredentials.password}`);
+        argument += ` --creds=${basicCredentials.username}:${basicCredentials.password}`;
     }
 
     if(maybeArgs.Type == "ValueFound") {
-        argArray.push(maybeArgs.Value);
+        argument += ` ${maybeArgs.Value}`;
     }        
 
-    tl.debug(`Running buildah ${argArray}`);
-    return tl.exec("buildah", argArray);
+    tl.debug(`Running buildah ${argument}`);
+    return tl.exec("buildah", argument);
 }
 
 run();
