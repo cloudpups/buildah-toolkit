@@ -11,6 +11,31 @@ An unofficial (from the perspective of `buildah`) extension that allows for a be
 * ◻ Supply credentials specific to AWS via Service Connection
 * ◻ Supply credentials specific to Azure via Service Connection
 
+## Example
+
+Please note that `basicCredentials: 'Buildah DockerHub'` was configured with a [Service Connection](https://docs.microsoft.com/en-us/azure/devops/pipelines/library/service-endpoints?view=azure-devops&tabs=yaml).
+
+```yml
+variables:
+- name: tag
+  value: docker.io/trfc/buildah-sample:latest
+
+steps:
+- task: NodeTool@0
+  inputs:
+    versionSpec: '10.x'
+- task: BuildahCli@0
+  inputs:
+    command: 'bud'
+    arguments: '-f $(System.DefaultWorkingDirectory)/test/Dockerfile -t $(tag)'
+- task: BuildahCli@0
+  inputs:
+    command: 'push'
+    arguments: '$(tag)'
+    loginType: 'basic'
+    basicCredentials: 'Buildah DockerHub'
+```
+
 ## Motivation
 
 At the time this was created, no other extensions existed to make interacting with `buildah` *cleaner* (i.e. leverage specific built in capabilities of Azure DevOps, like Service Connections).
