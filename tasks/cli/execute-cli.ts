@@ -91,9 +91,14 @@ async function run() {
 
     tl.debug(`Running buildah ${argument}`);
 
-    const result = await tl.exec("buildah", argument);
+    try{
+        const result = await tl.exec("buildah", argument);
 
-    return result;
+        tl.setResult(result, null, true);
+    }    
+    catch (err) {
+        tl.setResult(tl.TaskResult.Failed, err.message || 'run() failed', true);
+    }
 }
 
 run();
