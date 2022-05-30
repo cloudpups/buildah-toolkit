@@ -90,7 +90,10 @@ async function run() {
     }        
 
     tl.debug(`Running buildah ${argument}`);
-    return tl.exec("buildah", argument);
+
+    const result = await tl.exec("buildah", argument);
+
+    return result;
 }
 
 run();
