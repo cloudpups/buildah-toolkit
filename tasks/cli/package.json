@@ -7,6 +7,6 @@
   },
   "license": "MIT",
   "dependencies": {
-    "azure-pipelines-task-lib": "^2.9.5"
+    "azure-pipelines-task-lib": "^4.0.0-preview"
   }
 }
